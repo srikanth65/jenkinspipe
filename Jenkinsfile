@@ -5,24 +5,70 @@ pipeline {
     options {
         ansiColor('xterm')
     }
+    parameters {
+        choice(name: 'action', choices: ['apply', 'destroy'], description: 'Pick something')
+    }
     stages{
-        stage('Build') {
+        stage('Init') {
             steps {
-                echo 'Building...'
+                echo 'terraform initializing...'
                 sh """
-                ls -la
+                terraform init
                 """
             }
         }
-        stage('Test'){
+        stage('plan'){
             steps{
-                echo 'Testing...'
+                echo 'Terraform plan applying...'
+                sh """
+                terraform apply
+                """
             }
         }
         stage('Deploy'){
-            steps{
-                echo 'Deploying...'
+            when { 
+                expression {  
+                    params.action == 'apply'
+                    } 
+                }
+            input {
+                message "Should we continue?"
+                ok "Yes, we should."
             }
+            steps{
+                echo 'Terraform Deploy applying...'
+                sh """
+                terraform apply --auto-approve
+                """
+            }
+        }
+        stage('Destroy'){
+            when { 
+                expression {  
+                    params.action == 'destroy'
+                    } 
+                }
+            input {
+                message "Should we continue?"
+                ok "Yes, we should."
+            }
+            steps{
+                echo 'Terraform destroying applying...'
+                sh """
+                terraform destroy --auto-approve
+                """
+            }
+        }
+    }
+    post { 
+        always { 
+            echo 'I will always say Hello again!'
+        }
+        failure { 
+            echo 'this runs when pipeline is failed, used generally to send some alerts'
+        }
+        success{
+            echo 'I will say Hello when pipeline is success'
         }
     }
 }
