@@ -2,6 +2,9 @@ pipeline {
     agent {
         label 'AGENT1'
     }
+    options {
+        ansiColor('xterm')
+    }
     stages{
         stage('Build') {
             steps {
