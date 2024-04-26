@@ -21,7 +21,7 @@ pipeline {
             steps{
                 echo 'Terraform plan applying...'
                 sh """
-                terraform apply
+                terraform plan
                 """
             }
         }
