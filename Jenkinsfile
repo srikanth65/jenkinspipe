@@ -55,7 +55,7 @@ pipeline {
             steps{
                 echo 'Terraform destroying applying...'
                 sh """
-                terraform destroy --auto-approve
+                terraform destroy --auto-approve 
                 """
             }
         }
